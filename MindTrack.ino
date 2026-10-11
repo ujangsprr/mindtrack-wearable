@@ -436,7 +436,7 @@ void loop() {
   }
 
   // Serialisasi data JSON untuk transmisi BLE
-  StaticJsonDocument<220> doc;
+  StaticJsonDocument<256> doc;
   doc["worn"] = isWorn ? 1 : 0;
   doc["hr"]   = (int)round(latestHR);
   doc["ibi"]  = (int)currentIbi;
@@ -447,8 +447,11 @@ void loop() {
   doc["ir"]   = irValue;
   doc["ss"]   = sensorStatus;
   doc["ts"]   = (uint32_t)(millis() / 1000);
+  doc["ax"]   = round(accel.acceleration.x * 100.0f) / 100.0f;
+  doc["ay"]   = round(accel.acceleration.y * 100.0f) / 100.0f;
+  doc["az"]   = round(accel.acceleration.z * 100.0f) / 100.0f;
 
-  char buffer[220];
+  char buffer[256];
   size_t len = serializeJson(doc, buffer);
 
   // Kirimkan ke Ponsel jika terkoneksi
