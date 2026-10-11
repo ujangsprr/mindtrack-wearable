@@ -189,3 +189,10 @@ Pastikan menginstal library berikut sebelum melakukan kompilasi sketch:
 
 **Pilihan Board di Arduino IDE:**  
 `Seeed Studio XIAO ESP32-C3` (*Board Package: esp32 by Espressif Systems*).
+
+---
+
+## 📄 Lisensi & Kontributor
+Proyek ini dirilis di bawah lisensi MIT.  
+Dikembangkan oleh [Ujang](https://github.com/ujangsprr) untuk riset dan implementasi sistem wearable monitoring stres.
+
