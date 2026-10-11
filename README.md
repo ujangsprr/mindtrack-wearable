@@ -94,7 +94,10 @@ Seluruh konfigurasi pin dikonsolidasikan terpusat di file [`pins_config.h`](pins
   "g": 30,
   "ir": 120500,
   "ss": 31,
-  "ts": 128
+  "ts": 128,
+  "ax": 0.12,
+  "ay": -0.05,
+  "az": 9.81
 }
 ```
 
@@ -110,11 +113,15 @@ Seluruh konfigurasi pin dikonsolidasikan terpusat di file [`pins_config.h`](pins
 | `ir` | Integer (raw) | Nilai intensitas refleksi LED inframerah sensor MAX30102. |
 | `ss` | Bitmask (Integer) | **Sensor Status Health**: bit0=HR, bit1=HRV, bit2=GSR, bit3=Temp, bit4=IMU. |
 | `ts` | Integer (detik) | Waktu uptime sistem sejak dinyalakan. |
+| `ax, ay, az` | Float (m/s²) | Pembacaan akselerometer MPU6050 3-sumbu untuk deteksi gerak dinamis. |
 
 > 📲 **Decoding Bitmask `ss` di Aplikasi:**
 > - `ss = 31` (`0b11111`) : Semua sensor beroperasi optimal.
 > - `ss = 29` (`0b11101`) : Bit 1 (`0`) → HRV sedang proses kalkulasi beat.
 > - `ss = 27` (`0b11011`) : Bit 2 (`0`) → Elektroda GSR lepas / tidak terhubung.
+
+> 📱 **Aplikasi Ponsel:**
+> Repositori aplikasi Flutter pendamping tersedia di [mindtrack-app](https://github.com/ujangsprr/mindtrack-app.git).
 
 ---
 
