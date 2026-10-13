@@ -50,7 +50,7 @@ const uint32_t OLED_INTERVAL = 500;     // Refresh layar OLED setiap 500 ms
 // ======================== CALLBACK PERINTAH BLE (COMMAND) ========================
 // Menangani data teks yang dikirimkan oleh aplikasi ponsel ke perangkat
 class CmdCallbacks : public NimBLECharacteristicCallbacks {
-  void onWrite(NimBLECharacteristic *pChar) override {
+  void onWrite(NimBLECharacteristic *pChar, NimBLEConnInfo &connInfo) override {
     std::string val = pChar->getValue();
     if (val.empty()) return;
     Serial.printf("[BLE-CMD] Perintah diterima: %s\n", val.c_str());
@@ -67,23 +67,23 @@ class CmdCallbacks : public NimBLECharacteristicCallbacks {
 // ======================== CALLBACK SERVER BLE (KONEKSI) ========================
 // Mendeteksi event koneksi, diskoneksi, dan negosiasi MTU ponsel
 class ServerCallbacks : public NimBLEServerCallbacks {
-  void onConnect(NimBLEServer *pServer, ble_gap_conn_desc *desc) override {
+  void onConnect(NimBLEServer *pServer, NimBLEConnInfo &connInfo) override {
     deviceConnected = true;
     Serial.printf("[BLE] Terhubung ke perangkat client: %s\n",
-                  NimBLEAddress(desc->peer_ota_addr).toString().c_str());
+                  connInfo.getAddress().toString().c_str());
     // Optimasi parameter koneksi interval: min 7.5ms, max 15ms, latency 0, timeout 4s
-    pServer->updateConnParams(desc->conn_handle, 6, 12, 0, 400);
+    pServer->updateConnParams(connInfo.getConnHandle(), 6, 12, 0, 400);
     // Request MTU besar (247 byte) agar JSON 1 paket tidak terfragmentasi
     NimBLEDevice::setMTU(247);
   }
 
-  void onDisconnect(NimBLEServer *pServer) override {
+  void onDisconnect(NimBLEServer *pServer, NimBLEConnInfo &connInfo, int reason) override {
     deviceConnected = false;
     Serial.println("[BLE] Koneksi terputus. Mengaktifkan re-advertising...");
     NimBLEDevice::startAdvertising();
   }
 
-  void onMTUChange(uint16_t MTU, ble_gap_conn_desc *desc) override {
+  void onMTUChange(uint16_t MTU, NimBLEConnInfo &connInfo) override {
     Serial.printf("[BLE] Ukuran MTU dinegosiasikan menjadi: %d bytes\n", MTU);
   }
 };
@@ -117,7 +117,6 @@ void initBLE() {
   // Konfigurasi paket advertising
   NimBLEAdvertising *pAdv = NimBLEDevice::getAdvertising();
   pAdv->addServiceUUID(SERVICE_UUID);
-  pAdv->setScanResponse(true);
   pAdv->setMinInterval(32);  // ~20ms
   pAdv->setMaxInterval(160); // ~100ms
   NimBLEDevice::startAdvertising();
